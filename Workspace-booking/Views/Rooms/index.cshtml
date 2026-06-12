@@ -1,0 +1,35 @@
+﻿@using Workspace_booking.Services
+@model IEnumerable<Room>
+
+@{
+    ViewData["Title"] = "Available Rooms";
+}
+
+<h1>@ViewData"[Title]"</h1>
+
+<table class="table">
+    <tbody>
+    @{
+        foreach (var room in Model)
+        {
+            <tr>
+                <td>@room.Id</td>
+                <td>@room.Name</td>
+                <td>@room.Capacity</td>
+                <td>@room.BuildingFloor</td>
+            </tr>
+        }
+    }
+    </tbody>
+</table>
+
+<form asp-controller="Room" asp-action="Create" method="post">
+    <div>
+        <label for="RoomId">Room ID:</label>
+        <input id="RoomId" name="number" type="number" class="form-control" required />
+    </div>
+    <div>
+        <label for="User">Your Name:</label>
+        <input id="User" name="User" type="text" class="form-control" required/>
+    </div>
+</form>
