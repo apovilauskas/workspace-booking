@@ -4,12 +4,12 @@ using Workspace_booking.Services;
 
 namespace Workspace_booking.Controllers;
 
-public class RoomController : Controller
+public class RoomsController : Controller
 {
     
     private readonly IBookingService _bookingService;
 
-    public RoomController(IBookingService bookingService)
+    public RoomsController(IBookingService bookingService)
     {
         _bookingService = bookingService;
     }
@@ -17,13 +17,13 @@ public class RoomController : Controller
     public async Task<IActionResult> Index()
     {
         var rooms = await _bookingService.GetRoomsAsync();
-        return View(rooms);
+        return View("Index", rooms);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(Booking newBooking)
+    public async Task<IActionResult> BookRoom(Booking newBooking)
     {
-        await _bookingService.AddBookingAsync(newBooking);
+        await _bookingService.BookRoomAsync(newBooking);
         return RedirectToAction(nameof(Index));
     }
     

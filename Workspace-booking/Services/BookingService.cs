@@ -23,12 +23,40 @@ public class BookingService : IBookingService
         return Task.FromResult(_bookings.AsEnumerable());
     }
 
-    public Task AddBookingAsync(Booking booking)
+    public Task BookRoomAsync(Booking booking)
     {
-        _bookings.Add(booking);
+        Booking newBooking = booking with
+        {
+            Date = DateTime.Now,
+            Id = _bookings.Count + 1
+        };
+        _bookings.Add(newBooking);
         return Task.CompletedTask;
     }
-    
-    
-    
+
+    public Task UnBookRoomAsync(Booking booking)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task AddRoomAsync(Room room)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task RemoveRoomAsync(Room room)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task GetRoomByIdAsync(int id)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task GetBookingByIdAsync(int id)
+    {
+        throw new NotImplementedException();
+    }
+
 }

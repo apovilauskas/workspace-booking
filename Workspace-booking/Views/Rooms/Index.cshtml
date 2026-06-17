@@ -5,7 +5,7 @@
     ViewData["Title"] = "Available Rooms";
 }
 
-<h1>@ViewData"[Title]"</h1>
+<h1>@ViewData["Title"]</h1>
 
 <table class="table">
     <tbody>
@@ -19,17 +19,24 @@
                 <td>@room.BuildingFloor</td>
             </tr>
         }
+
     }
     </tbody>
 </table>
 
-<form asp-controller="Room" asp-action="Create" method="post">
+<form asp-controller="Rooms" asp-action="BookRoom" method="post">
     <div>
         <label for="RoomId">Room ID:</label>
-        <input id="RoomId" name="number" type="number" class="form-control" required />
+        <input id="RoomId" name="RoomId" type="number" class="form-control" required />
     </div>
     <div>
         <label for="User">Your Name:</label>
-        <input id="User" name="User" type="text" class="form-control" required/>
+        <input id="User" name="EmployeeName" type="text" class="form-control" required/>
     </div>
+    <div>
+        <label for="Hours">Hours:</label>
+        <input id="Hours" name="Hours" type="number" class="form-control" required/>
+    </div>
+    <button type="submit" class="btn btn-primary mt-3"> Book this room</button>
+
 </form>
