@@ -40,3 +40,18 @@
     <button type="submit" class="btn btn-primary mt-3"> Book this room</button>
 
 </form>
+
+@*after booking submission, we get a message *@
+@{
+    if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success mt-3" role="alert">
+            @TempData["SuccessMessage"]
+        </div>
+    } else if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-warning mt-3" role="alert">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+}

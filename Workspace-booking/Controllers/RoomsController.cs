@@ -23,7 +23,12 @@ public class RoomsController : Controller
     [HttpPost]
     public async Task<IActionResult> BookRoom(Booking newBooking)
     {
-        await _bookingService.BookRoomAsync(newBooking);
+        (bool isSuccess, String message) = await _bookingService.BookRoomAsync(newBooking);
+        if (isSuccess)
+        {
+            TempData["SuccessMessage"] = message;
+        } else TempData["ErrorMessage"] = message;
+        
         return RedirectToAction(nameof(Index));
     }
     

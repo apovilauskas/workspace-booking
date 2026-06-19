@@ -6,7 +6,7 @@ public interface IBookingService
 {
     Task<IEnumerable<Room>> GetRoomsAsync();
     Task<IEnumerable<Booking>> GetBookingsAsync(); 
-    Task BookRoomAsync (Booking booking);
+    Task<(bool IsSuccess, string Message)>BookRoomAsync (Booking booking);
     Task UnBookRoomAsync (Booking booking);
     Task AddRoomAsync (Room room);
     Task RemoveRoomAsync (Room room);
