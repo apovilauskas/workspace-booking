@@ -22,7 +22,7 @@ public class BookingService : IBookingService
     {
         var roomsInProgress = _bookings
             .Where(room => DateTime.Now >= room.Date && DateTime.Now < room.Date.AddHours(room.Hours))
-            .Select(room => room.Id)
+            .Select(room => room.RoomId)
             .ToList();
         var availableRooms = _rooms.Where(room => !roomsInProgress.Contains(room.Id));
         return Task.FromResult(availableRooms.AsEnumerable());
@@ -31,14 +31,28 @@ public class BookingService : IBookingService
     public Task<IEnumerable<Booking>> GetBookingsAsync()
     {
         var roomsInProgress = _bookings
-            .Where(room => DateTime.Now >= room.Date && DateTime.Now < room.Date.AddHours(room.Hours))
-            .Select(room => room.Id)
-            .ToList();
-        return Task.FromResult(_bookings.AsEnumerable());
+            .Where(room => DateTime.Now >= room.Date && DateTime.Now < room.Date.AddHours(room.Hours));
+        return Task.FromResult(roomsInProgress);
     }
 
     public Task<(bool IsSuccess, string Message)> BookRoomAsync(Booking booking)
     {
+        /*input validation*/
+        if (booking.Hours > 12)
+        {
+            return Task.FromResult((false,"Booking Cannot Exceed 12 Hours"));
+        }
+        if (string.IsNullOrWhiteSpace(booking.EmployeeName) || booking.EmployeeName.Length > 32)
+        {
+            return Task.FromResult((false, "Invalid Name (Max 32 characters)"));
+        }
+        var roomExists = _rooms.Any(room => room.Id == booking.RoomId);
+        if (!roomExists)
+        {
+            return Task.FromResult((false, "Room does not exist."));
+        }
+        
+        /*action*/
         var roomIds = _bookings.Select(x => x.RoomId).ToList();
         var availableRooms = _rooms.Where(room => !roomIds.Contains(room.Id)).Select(r => r.Id);
         
