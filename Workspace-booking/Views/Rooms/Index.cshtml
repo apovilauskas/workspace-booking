@@ -1,57 +1,139 @@
 ﻿@using Workspace_booking.Services
-@model IEnumerable<Room>
+@model Workspace_booking.Models.ViewModels.RoomsIndexViewModel
 
 @{
     ViewData["Title"] = "Available Rooms";
+    ViewData["Booked"] = "Booked Workspaces";
 }
 
-<h1>@ViewData["Title"]</h1>
-
-<table class="table">
-    <tbody>
-    @{
-        foreach (var room in Model)
-        {
-            <tr>
-                <td>@room.Id</td>
-                <td>@room.Name</td>
-                <td>@room.Capacity</td>
-                <td>@room.BuildingFloor</td>
-            </tr>
-        }
-
+<style>
+    .dashboard-container { max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
+    h1 { font-weight: 700; color: #1a202c; letter-spacing: -0.05em; margin-bottom: 1.5rem; }
+    h2 { font-weight: 600; color: #4a5568; margin-top: 2.5rem; margin-bottom: 1rem; font-size: 1.5rem; }
+    
+    .table { border-color: #edf2f7; vertical-align: middle; }
+    .table th { font-weight: 600; color: #718096; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em; }
+    
+    .form-control { border-radius: 6px; border: 1px solid #e2e8f0; padding: 0.6rem 0.75rem; }
+    .form-control:focus { border-color: #cbd5e1; box-shadow: none; }
+    .btn-primary { background-color: #2d3748; border: none; padding: 0.6rem 1.2rem; border-radius: 6px; font-weight: 500; }
+    .btn-primary:hover { background-color: #1a202c; }
+    
+    .table-scroll-container {
+        max-height: 240px;
+        overflow-y: auto;
+        border: 1px solid #edf2f7;
+        border-radius: 6px;
+        margin-bottom: 1.5rem;
     }
-    </tbody>
-</table>
+    .table-scroll-container thead th {
+        position: sticky;
+        top: 0;
+        background-color: #ffffff;
+        z-index: 1;
+        box-shadow: inset 0 -1px 0 #edf2f7;
+    }
+    
+    /* Hover effects for the Cancel button */
+    .hover-cancel-btn {
+        opacity: 0;
+        transition: opacity 0.2s ease-in-out;
+    }
+    tr:hover .hover-cancel-btn {
+        opacity: 1;
+    }
+</style>
 
-<form asp-controller="Rooms" asp-action="BookRoom" method="post">
-    <div>
-        <label for="RoomId">Room ID:</label>
-        <input id="RoomId" name="RoomId" type="number" class="form-control" required />
-    </div>
-    <div>
-        <label for="User">Your Name:</label>
-        <input id="User" name="EmployeeName" type="text" class="form-control" required/>
-    </div>
-    <div>
-        <label for="Hours">Hours:</label>
-        <input id="Hours" name="Hours" type="number" class="form-control" required/>
-    </div>
-    <button type="submit" class="btn btn-primary mt-3"> Book this room</button>
-
-</form>
-
-@*after booking submission, we get a message *@
-@{
-    if (TempData["SuccessMessage"] != null)
+<div class="dashboard-container">
+    <h1>Workspace Booking Platform</h1>
+    
+    @if (TempData["SuccessMessage"] != null)
     {
-        <div class="alert alert-success mt-3" role="alert">
+        <div class="alert alert-success border-0 shadow-sm mb-4" role="alert">
             @TempData["SuccessMessage"]
         </div>
-    } else if (TempData["ErrorMessage"] != null)
+    } 
+    @if (TempData["ErrorMessage"] != null)
     {
-        <div class="alert alert-warning mt-3" role="alert">
+        <div class="alert alert-warning border-0 shadow-sm mb-4" role="alert">
             @TempData["ErrorMessage"]
         </div>
     }
-}
+
+    <h2>@ViewData["Title"]</h2>
+    <div class="table-scroll-container">
+        <table class="table align-middle m-0">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Room Name</th>
+                    <th>Capacity</th>
+                    <th>Floor</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var room in Model.AvailableRooms)
+                {
+                    <tr>
+                        <td><span class="badge bg-light text-dark">@room.Id</span></td>
+                        <td><strong>@room.Name</strong></td>
+                        <td>@room.Capacity people</td>
+                        <td>Floor @room.BuildingFloor</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card border-0 bg-light p-4 my-4 rounded-3">
+        <h4 class="mb-3 fs-5 font-weight-bold">Reserve a Workspace</h4>
+        <form asp-controller="Rooms" asp-action="BookRoom" method="post">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label for="RoomId" class="form-label small text-muted">Room ID</label>
+                    <input id="RoomId" name="RoomId" type="number" class="form-control" required />
+                </div>
+                <div class="col-md-5">
+                    <label for="User" class="form-label small text-muted">Your Name</label>
+                    <input id="User" name="EmployeeName" type="text" class="form-control" required/>
+                </div>
+                <div class="col-md-4">
+                    <label for="Hours" class="form-label small text-muted">Duration (Hours)</label>
+                    <input id="Hours" name="Hours" type="number" class="form-control" min="1" required/>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">Book Room</button>
+        </form>
+    </div>
+
+    <h2>@ViewData["Booked"]</h2>
+    <div class="table-scroll-container">
+        <table class="table align-middle m-0">
+            <thead>
+                <tr>
+                    <th>Room ID</th>
+                    <th>Booked By</th>
+                    <th>Expires At</th>
+                    <th style="width: 100px;"></th> </tr>
+            </thead>
+            <tbody>
+                @foreach (var booking in Model.CurrentBookings)
+                {
+                    <tr>
+                        <td><span class="badge bg-light text-dark">@booking.RoomId</span></td>
+                        <td>@booking.EmployeeName</td>
+                        <td class="text-muted">@booking.Date.AddHours(booking.Hours).ToString("HH:mm")</td>
+                        <td>
+                            <form asp-controller="Rooms" asp-action="UnbookRoom" method="post" class="d-inline m-0">
+                                <input type="hidden" name="bookingId" value="@booking.Id" />
+                                <button type="submit" class="btn btn-sm btn-outline-danger py-0 px-2 hover-cancel-btn" style="border-radius: 4px;">
+                                    Cancel
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
