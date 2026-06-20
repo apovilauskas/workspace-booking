@@ -1,4 +1,5 @@
-﻿using Workspace_booking.Models;
+﻿using Workspace_booking.Common;
+using Workspace_booking.Models;
 
 namespace Workspace_booking.Services;
 
@@ -6,7 +7,7 @@ public interface IBookingService
 {
     Task<IEnumerable<Room>> GetAvailableRoomsAsync();
     Task<IEnumerable<Booking>> GetBookingsAsync(); 
-    Task<(bool IsSuccess, string Message)>BookRoomAsync (Booking booking);
-    Task<(bool IsSuccess, string Message)> UnBookRoomAsync (int bookingId);
+    Task<Result>BookRoomAsync (Booking booking);
+    Task<Result> UnBookRoomAsync (int bookingId);
 
 }

@@ -1,4 +1,5 @@
 ﻿using System.Runtime.InteropServices.JavaScript;
+using Workspace_booking.Common;
 using Workspace_booking.Models;
 
 namespace Workspace_booking.Services;
@@ -35,21 +36,21 @@ public class BookingService : IBookingService
         return Task.FromResult(roomsInProgress);
     }
 
-    public Task<(bool IsSuccess, string Message)> BookRoomAsync(Booking booking)
+    public Task<Result> BookRoomAsync(Booking booking)
     {
         /*input validation*/
         if (booking.Hours > 12)
         {
-            return Task.FromResult((false,"Booking Cannot Exceed 12 Hours"));
+            return Task.FromResult(new Result(false,"Booking Cannot Exceed 12 Hours"));
         }
         if (string.IsNullOrWhiteSpace(booking.EmployeeName) || booking.EmployeeName.Length > 32)
         {
-            return Task.FromResult((false, "Invalid Name (Max 32 characters)"));
+            return Task.FromResult(new Result(false, "Invalid Name (Max 32 characters)"));
         }
         var roomExists = _rooms.Any(room => room.Id == booking.RoomId);
         if (!roomExists)
         {
-            return Task.FromResult((false, "Room does not exist."));
+            return Task.FromResult(new Result(false, "Room does not exist."));
         }
         
         /*action*/
@@ -58,7 +59,7 @@ public class BookingService : IBookingService
         
         if (!availableRooms.Contains(booking.RoomId))
         {
-            return Task.FromResult((false,"Room Not Available"));
+            return Task.FromResult(new Result(false,"Room Not Available"));
         }
         
         Booking newBooking = booking with
@@ -67,19 +68,19 @@ public class BookingService : IBookingService
             Id = _bookings.Count + 1
         };
         _bookings.Add(newBooking);  
-        return Task.FromResult((true, "Room Booked Successfully"));
+        return Task.FromResult(new Result(true, "Room Booked Successfully"));
     }
 
 
-    public Task<(bool IsSuccess, string Message)> UnBookRoomAsync(int bookingId)
+    public Task<Result> UnBookRoomAsync(int bookingId)
     {
         var booking = _bookings.FirstOrDefault(x => x.Id == bookingId);
         if (booking == null)
         {
-            return Task.FromResult((false, "Cancellation Failed"));
+            return Task.FromResult(new Result(false, "Cancellation Failed"));
         }
         _bookings.Remove(booking);
-        return Task.FromResult((true,  "Booking Cancelled Successfully"));
+        return Task.FromResult(new Result(true,  "Booking Cancelled Successfully"));
         
     }
 

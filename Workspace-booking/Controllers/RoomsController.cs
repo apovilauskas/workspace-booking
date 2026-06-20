@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Workspace_booking.Common;
 using Workspace_booking.Models;
 using Workspace_booking.Models.ViewModels;
 using Workspace_booking.Services;
@@ -30,11 +31,11 @@ public class RoomsController : Controller
     [HttpPost]
     public async Task<IActionResult> BookRoom(Booking newBooking)
     {
-        (bool isSuccess, string message) = await _bookingService.BookRoomAsync(newBooking);
-        if (isSuccess)
+        Result result = await _bookingService.BookRoomAsync(newBooking);
+        if (result.IsSuccess)
         {
-            TempData["SuccessMessage"] = message;
-        } else TempData["ErrorMessage"] = message;
+            TempData["SuccessMessage"] = result.Message;
+        } else TempData["ErrorMessage"] = result.Message;
         
         return RedirectToAction(nameof(Index));
     }
@@ -42,11 +43,11 @@ public class RoomsController : Controller
     [HttpPost]
     public async Task<IActionResult> UnbookRoom(int bookingId)
     {
-        (bool isSuccess, string message) = await _bookingService.UnBookRoomAsync(bookingId);
-        if (isSuccess)
+        Result result = await _bookingService.UnBookRoomAsync(bookingId);
+        if (result.IsSuccess)
         {
-            TempData["SuccessMessage"] = message;
-        } else TempData["ErrorMessage"] = message;
+            TempData["SuccessMessage"] = result.Message;
+        } else TempData["ErrorMessage"] = result.Message;
         return RedirectToAction(nameof(Index));
     }
     
